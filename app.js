@@ -82,7 +82,9 @@ function sparkline(prices){
   return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}"><polyline points="${pts}" fill="none" stroke="${up?"#3ddc84":"#ff6b6b"}" stroke-width="1.5"/></svg>`;
 }
 function renderWatchlist(){
-  const wl=getWatchlist();
+  try{
+  const _wl=getWatchlist();
+  const wl=Array.isArray(_wl)?_wl:DEFAULT_WATCHLIST.slice();
   let rows=wl.map(sym=>{
     const s=DATA&&DATA.stocks[sym];
     const px=getPrice(sym), pc=getPrevClose(sym);
@@ -99,6 +101,7 @@ function renderWatchlist(){
       <div class="wl-px"><span class="lp">${r.px!=null?"$"+r.px.toFixed(2):"—"}</span><div class="wl-chg ${r.cls}">${r.chg!=null?(r.chg>=0?"+":"")+r.chg.toFixed(2)+"%":"—"}</div></div>
       <button class="wl-x" onclick="event.stopPropagation();removeTicker('${r.sym}')">×</button>
     </div>`).join("");
+  }catch(err){ $("watchlist-body").innerHTML='<div class="loading">名單出錯：'+String(err&&err.message||err)+'</div>'; }
 }
 function updateRowPrice(sym, px){
   const row=document.querySelector(`[data-sym="${sym}"]`); if(!row) return;
