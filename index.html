@@ -5,137 +5,126 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>股票情報站</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, "PingFang HK", "Microsoft JhengHei", sans-serif; background: #0f1420; color: #e8eaf0; font-size: 18px; line-height: 1.6; padding: 16px; max-width: 900px; margin: 0 auto; }
-  h1 { font-size: 28px; margin-bottom: 4px; }
-  .sub { color: #8b93a7; font-size: 15px; margin-bottom: 20px; }
-  .search-row { display: flex; gap: 10px; margin-bottom: 16px; }
-  input[type=text] { flex: 1; font-size: 20px; padding: 12px 14px; border-radius: 10px; border: 1px solid #2a3348; background: #1a2132; color: #fff; }
-  button { font-size: 18px; padding: 12px 22px; border-radius: 10px; border: none; background: #2f7cf6; color: #fff; cursor: pointer; }
-  button:active { background: #2568d8; }
-  .watchlist { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-  .watchlist button { background: #1a2132; border: 1px solid #2a3348; font-size: 16px; padding: 8px 14px; }
-  .watchlist button.active { background: #2f7cf6; border-color: #2f7cf6; }
-  .card { background: #161c2b; border: 1px solid #232c44; border-radius: 14px; padding: 18px; margin-bottom: 16px; }
-  .card h2 { font-size: 22px; margin-bottom: 10px; }
-  .price { font-size: 34px; font-weight: 700; }
-  .chg-up { color: #3ddc84; } .chg-dn { color: #ff6b6b; }
-  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
-  .metric { background: #1a2132; border-radius: 10px; padding: 10px 14px; }
-  .metric .k { font-size: 14px; color: #8b93a7; }
-  .metric .v { font-size: 20px; font-weight: 600; }
-  canvas { width: 100%; height: 260px; background: #0f1420; border-radius: 10px; margin-top: 10px; }
-  .news-item { border-top: 1px solid #232c44; padding: 12px 0; }
-  .news-item:first-child { border-top: none; }
-  .news-item a { color: #7db4ff; text-decoration: none; font-size: 17px; }
-  .news-item .meta { font-size: 14px; color: #8b93a7; margin-top: 4px; }
-  .sent { display: inline-block; font-size: 14px; padding: 2px 10px; border-radius: 20px; margin-left: 8px; }
-  .sent-pos { background: rgba(61,220,132,.15); color: #3ddc84; }
-  .sent-neg { background: rgba(255,107,107,.15); color: #ff6b6b; }
-  .sent-neu { background: rgba(139,147,167,.15); color: #8b93a7; }
-  .loading { text-align: center; color: #8b93a7; padding: 30px; font-size: 18px; }
-  .verdict { font-size: 20px; padding: 14px; border-radius: 10px; margin-top: 12px; text-align: center; font-weight: 600; }
-  .v-bull { background: rgba(61,220,132,.12); color: #3ddc84; }
-  .v-bear { background: rgba(255,107,107,.12); color: #ff6b6b; }
-  .v-neutral { background: rgba(139,147,167,.12); color: #aab2c5; }
-  .note { font-size: 14px; color: #8b93a7; margin-top: 16px; text-align: center; }
-  .idx-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .idx { background: #161c2b; border: 1px solid #232c44; border-radius: 12px; padding: 12px 14px; }
-  .idx .n { font-size: 15px; color: #8b93a7; }
-  .idx .p { font-size: 24px; font-weight: 700; }
-  .idx .c { font-size: 16px; font-weight: 600; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"PingFang HK","Microsoft JhengHei",sans-serif;background:#0f1420;color:#e8eaf0;font-size:18px;line-height:1.6;padding:16px;max-width:900px;margin:0 auto}
+h1{font-size:28px;margin-bottom:4px}
+.sub{color:#8b93a7;font-size:15px;margin-bottom:14px}
+.ws-bar{display:flex;justify-content:space-between;align-items:center;background:#161c2b;border:1px solid #232c44;border-radius:12px;padding:10px 14px;margin-bottom:14px;font-size:15px}
+#ws-status{color:#3ddc84;font-weight:600}
+.card{background:#161c2b;border:1px solid #232c44;border-radius:14px;padding:18px;margin-bottom:16px}
+.card h2{font-size:22px;margin-bottom:10px}
+.cn{font-size:15px;color:#8b93a7;font-weight:400}
+.price{font-size:34px;font-weight:700}
+.up{color:#3ddc84}.dn{color:#ff6b6b}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.metric{background:#1a2132;border-radius:10px;padding:10px 14px}
+.metric .k{font-size:14px;color:#8b93a7}
+.metric .v{font-size:20px;font-weight:600}
+.metric .v.sm{font-size:16px}
+canvas{width:100%;height:260px;background:#0f1420;border-radius:10px;margin-top:10px}
+.lg{font-size:14px;color:#8b93a7;margin-top:6px}
+.news-item{border-top:1px solid #232c44;padding:12px 0}
+.news-item:first-child{border-top:none}
+.news-item a{color:#7db4ff;text-decoration:none;font-size:17px}
+.news-item .meta{font-size:14px;color:#8b93a7;margin-top:4px}
+.sent{display:inline-block;font-size:14px;padding:2px 10px;border-radius:20px;margin-left:8px}
+.sent-pos{background:rgba(61,220,132,.15);color:#3ddc84}
+.sent-neg{background:rgba(255,107,107,.15);color:#ff6b6b}
+.sent-neu{background:rgba(139,147,167,.15);color:#8b93a7}
+.loading{text-align:center;color:#8b93a7;padding:30px;font-size:18px}
+.verdict{font-size:20px;padding:14px;border-radius:10px;margin-top:12px;text-align:center;font-weight:600}
+.v-bull{background:rgba(61,220,132,.12);color:#3ddc84}
+.v-bear{background:rgba(255,107,107,.12);color:#ff6b6b}
+.v-neutral{background:rgba(139,147,167,.12);color:#aab2c5}
+.note{font-size:14px;color:#8b93a7;margin-top:16px;text-align:center}
+.idx-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.idx{background:#161c2b;border:1px solid #232c44;border-radius:12px;padding:12px 14px}
+.idx .n{font-size:15px;color:#8b93a7}
+.idx .p{font-size:24px;font-weight:700}
+.idx .c{font-size:16px;font-weight:600}
+.wl-row{display:flex;align-items:center;gap:12px;background:#161c2b;border:1px solid #232c44;border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer}
+.wl-row:active{background:#1a2132}
+.wl-sym{font-size:20px;font-weight:700;min-width:70px}
+.wl-spark{flex:1}
+.wl-px{text-align:right;min-width:90px}
+.wl-px .lp{font-size:20px;font-weight:700}
+.wl-px .lp.flash{animation:fl .6s}
+@keyframes fl{0%{background:rgba(47,124,246,.5)}100%{background:transparent}}
+.wl-chg{font-size:15px;font-weight:600}
+.wl-x{background:none;border:none;color:#8b93a7;font-size:24px;cursor:pointer;padding:0 4px}
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+.toolbar input{flex:1;min-width:140px;font-size:18px;padding:10px 12px;border-radius:10px;border:1px solid #2a3348;background:#1a2132;color:#fff}
+button{font-size:18px;padding:10px 20px;border-radius:10px;border:none;background:#2f7cf6;color:#fff;cursor:pointer}
+button:active{background:#2568d8}
+button.ghost{background:#1a2132;border:1px solid #2a3348;font-size:15px;padding:8px 14px}
+.sort-btn{background:#1a2132;border:1px solid #2a3348;font-size:15px;padding:8px 14px}
+.sort-btn.active{background:#2f7cf6;border-color:#2f7cf6}
+.back{background:#1a2132;border:1px solid #2a3348;font-size:16px;padding:8px 16px}
+.live-tag{font-size:14px;margin:6px 0;color:#8b93a7}
+.alert-box{margin-top:14px;background:#1a2132;border-radius:10px;padding:12px 14px}
+.alert-box .k{font-size:16px;font-weight:600;margin-bottom:8px}
+.alert-row{display:flex;gap:8px}
+.alert-row input{flex:1;font-size:18px;padding:10px 12px;border-radius:10px;border:1px solid #2a3348;background:#0f1420;color:#fff}
+.hint{font-size:13px;color:#8b93a7;margin-top:6px}
+.set-row{display:flex;gap:8px;margin-top:8px}
+.set-row input{flex:1;font-size:16px;padding:10px 12px;border-radius:10px;border:1px solid #2a3348;background:#0f1420;color:#fff}
+.tabs{display:flex;gap:8px;margin-bottom:16px}
+.tab{flex:1;text-align:center;padding:12px;font-size:18px;background:#161c2b;border:1px solid #232c44;border-radius:12px;cursor:pointer;color:#8b93a7}
+.tab.active{background:#2f7cf6;color:#fff;border-color:#2f7cf6}
+.hidden{display:none}
 </style>
 </head>
 <body>
 <h1>📈 股票情報站</h1>
-<div class="sub">新聞＋技術指標（<span id="updated">載入中…</span>更新）</div>
-<div class="idx-grid" id="indices"></div>
-<div class="search-row">
-  <input type="text" id="ticker" placeholder="輸入 ticker，例如 NVDA" autocapitalize="characters">
-  <button onclick="analyze()">分析</button>
+<div class="sub">新聞＋技術指標＋即時串流（<span id="updated">載入中…</span>更新）</div>
+<div class="ws-bar"><span>⚡ 即時串流</span><span id="ws-status">連接中…</span></div>
+<div class="tabs">
+  <div class="tab active" onclick="showTab('home')">🏠 主頁</div>
+  <div class="tab" onclick="showTab('settings')">⚙️ 設定</div>
 </div>
-<div class="watchlist" id="watchlist"></div>
-<div id="result"></div>
-<div class="note">數據每小時更新｜僅供研究參考，唔係買賣建議</div>
-<script>
-let DATA = null;
-const WATCHLIST = ["TSLA","NVDA","AAPL","SPCX","GOOGL","NBIS","CRWV","ONDS","PLTR","RKLB","AVAV","SMR","UNH","META","MSFT","AMZN","INTC","AMD","AVGO","SNDK","MU","TSM","BE","SOFI","ASTS"];
-const POS_WORDS = ["beat","surge","jump","rally","record","upgrade","bullish","growth","profit","gain","soar","outperform","raise","strong","optimistic","breakthrough","approve","win","expand","launch"];
-const NEG_WORDS = ["miss","plunge","drop","fall","downgrade","bearish","loss","cut","lawsuit","probe","warning","risk","concern","weak","decline","selloff","crash","fraud","bankrupt","layoff"];
-function sentiment(text){const t=(text||"").toLowerCase();let s=0;POS_WORDS.forEach(w=>{if(t.includes(w))s++;});NEG_WORDS.forEach(w=>{if(t.includes(w))s--;});return s;}
-function sma(arr,n){const out=new Array(arr.length).fill(null);for(let i=n-1;i<arr.length;i++){let sum=0;for(let j=i-n+1;j<=i;j++)sum+=arr[j];out[i]=sum/n;}return out;}
-function ema(arr,n){const out=new Array(arr.length).fill(null);const k=2/(n+1);let prev=null;for(let i=0;i<arr.length;i++){prev=prev===null?arr[i]:arr[i]*k+prev*(1-k);out[i]=i>=n-1?prev:null;}return out;}
-function rsi(closes,n=14){const out=new Array(closes.length).fill(null);let gains=0,losses=0;for(let i=1;i<closes.length;i++){const d=closes[i]-closes[i-1];if(i<=n){if(d>0)gains+=d;else losses-=d;}if(i===n){let ag=gains/n,al=losses/n;out[i]=al===0?100:100-100/(1+ag/al);for(let j=i+1;j<closes.length;j++){const dd=closes[j]-closes[j-1];ag=(ag*(n-1)+Math.max(dd,0))/n;al=(al*(n-1)+Math.max(-dd,0))/n;out[j]=al===0?100:100-100/(1+ag/al);}break;}}return out;}
-function stddev(arr,n){const out=new Array(arr.length).fill(null);for(let i=n-1;i<arr.length;i++){const sl=arr.slice(i-n+1,i+1);const m=sl.reduce((a,b)=>a+b,0)/n;const v=sl.reduce((a,b)=>a+(b-m)*(b-m),0)/n;out[i]=Math.sqrt(v);}return out;}
-function drawChart(canvas,closes,sma20,sma50){const ctx=canvas.getContext("2d");const W=canvas.width=canvas.offsetWidth*2;const H=canvas.height=260*2;const vals=closes.filter(v=>v!=null);const min=Math.min(...vals),max=Math.max(...vals);const pad=(max-min)*0.1||1;const X=i=>10+i/(closes.length-1)*(W-20);const Y=v=>H-10-(v-min+pad)/(max-min+2*pad)*(H-20);ctx.strokeStyle="#2a3348";ctx.lineWidth=1;for(let g=0;g<4;g++){const y=10+g*(H-20)/3;ctx.beginPath();ctx.moveTo(10,y);ctx.lineTo(W-10,y);ctx.stroke();}const line=(arr,color,w)=>{ctx.strokeStyle=color;ctx.lineWidth=w;ctx.beginPath();let st=false;arr.forEach((v,i)=>{if(v==null)return;if(!st){ctx.moveTo(X(i),Y(v));st=true;}else ctx.lineTo(X(i),Y(v));});ctx.stroke();};line(sma50,"#8b93a7",2);line(sma20,"#f0b429",2);line(closes,"#2f7cf6",3);ctx.fillStyle="#8b93a7";ctx.font="20px sans-serif";ctx.fillText(max.toFixed(0),14,28);ctx.fillText(min.toFixed(0),14,H-14);}
-function renderWatchlist(active){document.getElementById("watchlist").innerHTML=WATCHLIST.map(t=>`<button class="${t===active?'active':''}" onclick="document.getElementById('ticker').value='${t}';analyze()">${t}</button>`).join("");}
-function renderIndices(){const el=document.getElementById("indices");el.innerHTML=Object.entries(DATA.indices).map(([name,d])=>{const p=d.prices,last=p[p.length-1].c,prev=p.length>1?p[p.length-2].c:d.prev;const chg=prev?(last-prev)/prev*100:0;const cls=chg>=0?"chg-up":"chg-dn";return `<div class="idx"><div class="n">${name}</div><div class="p">${last.toLocaleString()}</div><div class="c ${cls}">${chg>=0?"+":""}${chg.toFixed(2)}%</div></div>`;}).join("");}
-function analyze(){
-  const ticker=document.getElementById("ticker").value.trim().toUpperCase();
-  if(!ticker||!DATA)return;
-  renderWatchlist(ticker);
-  const el=document.getElementById("result");
-  const s=DATA.stocks[ticker];
-  if(!s){el.innerHTML='<div class="loading">名單入面冇 '+ticker+'，淨係支援觀察名單 25 隻。</div>';return;}
-  const closes=s.prices.map(p=>p.c),vols=s.prices.map(p=>p.v);
-  const last=closes[closes.length-1],prev=closes[closes.length-2];
-  const chg=last-prev,chgPct=chg/prev*100;
-  const s20=sma(closes,20),s50=sma(closes,50),e12=ema(closes,12),e26=ema(closes,26);
-  const rsiArr=rsi(closes),sd=stddev(closes,20);
-  const rsiLast=rsiArr[rsiArr.length-1];
-  const macdLine=e12.map((v,i)=>v==null||e26[i]==null?null:v-e26[i]);
-  const macdSig=ema(macdLine.filter(v=>v!=null),9);
-  const macdHist=macdLine[macdLine.length-1]-macdSig[macdSig.length-1];
-  const bbU=s20[s20.length-1]+2*sd[sd.length-1],bbL=s20[s20.length-1]-2*sd[sd.length-1];
-  const avgVol20=vols.slice(-20).reduce((a,b)=>a+b,0)/20;
-  const volRatio=avgVol20?vols[vols.length-1]/avgVol20:0;
-  let bull=0,bear=0;const sig=[];
-  if(rsiLast!=null){if(rsiLast<30){bull++;sig.push("RSI "+rsiLast.toFixed(1)+" 超賣");}else if(rsiLast>70){bear++;sig.push("RSI "+rsiLast.toFixed(1)+" 超買");}}
-  if(macdHist>0){bull++;sig.push("MACD 轉強");}else{bear++;sig.push("MACD 轉弱");}
-  if(s50[s50.length-1]!=null){if(last>s50[s50.length-1]){bull++;sig.push("企上 50 日線");}else{bear++;sig.push("跌穿 50 日線");}}
-  if(bbL!=null){if(last<bbL){bull++;sig.push("跌穿布林下軌（超賣反彈訊號）");}else if(last>bbU){bear++;sig.push("升穿布林上軌（追高風險）");}}
-  if(volRatio>1.5)sig.push("成交量放大 "+volRatio.toFixed(1)+" 倍");
-  const newsScored=(s.news||[]).map(n=>({...n,s:sentiment(n.t)}));
-  const avgSent=newsScored.length?newsScored.reduce((a,b)=>a+b.s,0)/newsScored.length:0;
-  if(avgSent>0.3)bull++;else if(avgSent<-0.3)bear++;
-  const verdict=bull>bear+1?["偏強","v-bull"]:bear>bull+1?["偏弱","v-bear"]:["中性","v-neutral"];
-  const chgCls=chg>=0?"chg-up":"chg-dn";
-  el.innerHTML=`
+
+<div id="tab-home">
+  <div class="idx-grid" id="indices"></div>
+  <div class="toolbar">
+    <input type="text" id="add-input" placeholder="加 ticker，例如 TSM" autocapitalize="characters">
+    <button onclick="addTicker()">新增</button>
+  </div>
+  <div class="toolbar">
+    <span style="font-size:15px;color:#8b93a7">排序：</span>
+    <button class="sort-btn active" data-m="default" onclick="setSort('default')">預設</button>
+    <button class="sort-btn" data-m="chg" onclick="setSort('chg')">升跌</button>
+    <button class="sort-btn" data-m="name" onclick="setSort('name')">名稱</button>
+  </div>
+  <div id="watchlist-body"></div>
+  <div id="detail"></div>
+</div>
+
+<div id="tab-settings" class="hidden">
   <div class="card">
-    <h2>${ticker} <span style="font-size:15px;color:#8b93a7">${s.name||""}</span></h2>
-    <div class="price">$${last.toFixed(2)} <span class="${chgCls}" style="font-size:20px">${chg>=0?"+":""}${chg.toFixed(2)} (${chgPct>=0?"+":""}${chgPct.toFixed(2)}%)</span></div>
-    <canvas id="chart"></canvas>
-    <div style="font-size:14px;color:#8b93a7;margin-top:6px">藍＝股價　黃＝20日線　灰＝50日線</div>
-    <div class="grid">
-      <div class="metric"><div class="k">RSI (14)</div><div class="v">${rsiLast!=null?rsiLast.toFixed(1):"—"}</div></div>
-      <div class="metric"><div class="k">MACD 柱</div><div class="v ${macdHist>=0?'chg-up':'chg-dn'}">${macdHist.toFixed(2)}</div></div>
-      <div class="metric"><div class="k">布林通道</div><div class="v" style="font-size:16px">${bbL!=null?bbL.toFixed(0)+" – "+bbU.toFixed(0):"—"}</div></div>
-      <div class="metric"><div class="k">量比</div><div class="v">${volRatio.toFixed(2)}x</div></div>
+    <h2>⚙️ 設定</h2>
+    <div style="font-size:16px;margin-bottom:6px">Finnhub API Key（即時串流用）</div>
+    <div class="set-row">
+      <input type="password" id="fh-key" placeholder="貼入 finnhub.io 免費 key">
+      <button onclick="saveKey()">儲存</button>
     </div>
-    <div class="verdict ${verdict[1]}">綜合：${verdict[0]}（${sig.join("；")||"無明顯訊號"}）</div>
+    <div class="hint" style="margin-top:8px">狀態：<span id="key-status">未設定</span></div>
+    <div class="hint">去 finnhub.io 免費申請，唔使綁信用卡。Key 只存喺呢部機嘅瀏覽器，唔會上傳去任何地方。</div>
   </div>
   <div class="card">
-    <h2>📰 近期新聞 <span style="font-size:15px;color:#8b93a7">（情緒 ${avgSent>=0?"+":""}${avgSent.toFixed(1)}）</span></h2>
-    ${newsScored.length?newsScored.map(n=>{
-      const c=n.s>0?"sent-pos":n.s<0?"sent-neg":"sent-neu";
-      const t=n.s>0?"偏好":n.s<0?"偏淡":"中性";
-      let dstr="";try{dstr=new Date(n.p).toLocaleDateString("zh-HK");}catch(e){}
-      return `<div class="news-item"><a href="${n.l}" target="_blank" rel="noopener">${n.t}</a><span class="sent ${c}">${t}</span><div class="meta">${n.s} · ${dstr}</div></div>`;
-    }).join(""):'<div class="meta">暫時冇新聞</div>'}
-  </div>`;
-  drawChart(document.getElementById("chart"),closes,s20,s50);
+    <h2>ℹ️ 關於</h2>
+    <div class="hint">股價歷史＋新聞：每小時自動更新<br>即時報價：Finnhub WebSocket 串流（開市時段逐秒）<br>技術指標喺瀏覽器即時計算<br><br>僅供研究參考，唔係買賣建議。</div>
+  </div>
+</div>
+
+<div class="note">數據每小時更新｜即時串流需設定 Finnhub key｜僅供研究參考，唔係買賣建議</div>
+<script>
+function showTab(t){
+  document.querySelectorAll(".tab").forEach(el=>el.classList.remove("active"));
+  event.target.classList.add("active");
+  $("tab-home").classList.toggle("hidden",t!=="home");
+  $("tab-settings").classList.toggle("hidden",t!=="settings");
 }
-async function init(){
-  try{
-    DATA=await(await fetch("data.json")).json();
-    document.getElementById("updated").textContent=DATA.updated;
-    renderIndices();renderWatchlist("");
-  }catch(e){
-    document.getElementById("result").innerHTML='<div class="loading">載入數據失敗，稍後再試。</div>';
-  }
-}
-init();
-document.getElementById("ticker").addEventListener("keydown",e=>{if(e.key==="Enter")analyze();});
 </script>
+<script src="app.js"></script>
 </body>
 </html>
